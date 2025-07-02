@@ -30,7 +30,7 @@ knife4j:
     description: 一个专注于技术分享的博客平台
     email: 2497754747@qq.com
     concat: 学鹏
-    url: https://www.shiyit.com
+    url: http://blog.hexp.online/
     version: v1.0
     group:
       test1:
@@ -75,16 +75,16 @@ qq:
   redirect-url: https://blog.hexp.online/xuepeng/api/auth/callback/qq
 
 weibo:
-  app-id:
-  app-secret:
+  app-id: baafe63e81a615892da03a0d67dcd0c286ce614d5f29da0e5506b0cb52efebef
+  app-secret: 61261625cd17b0e4ce3b6cdb3cf0d8897a66ff1a0632d7173fdbb181ecc71929
   redirect-url: https://blog.hexp.online/xuepeng/api/auth/weibo
 
 gitee:
   app-id:
-  app-secret:
+  app-secret: 5392b63abff3f5351bfeddc397911c8b
   redirect-url: https://blog.hexp.online/xuepeng/api/auth/callback/gitee
 
 github:
-  app-id:
-  app-secret:
+  app-id: Ov23liQL6H8vYLYu39kc
+  app-secret: 66762cf68cbe9d0e111eb67b66bb987f5a715f60
   redirect-url: https://blog.hexp.online/xuepeng/api/auth/callback/github
