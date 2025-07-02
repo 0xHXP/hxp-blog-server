@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hxp.mapper.SysCategoryMapper">
+    <!-- 可以在这里添加自定义的复杂SQL查询 -->
+    <resultMap id="resultMap" type="com.hxp.vo.article.CategoryListVo">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <collection property="posts" ofType="com.hxp.vo.article.ArticleListVo">
+            <id property="id" column="articleId"/>
+            <result property="title" column="title"/>
+            <result property="createTime" column="create_time"/>
+        </collection>
+    </resultMap>
+    <insert id="addArticleCategoryRelations">
+        INSERT INTO sys_article_category (article_id, category_id)
+        VALUES
+        <foreach item="categoryId" index="index" collection="categoryIds"
+                 open="" separator="," close="">
+            (#{articleId}, #{categoryId})
+        </foreach>
+    </insert>
+    <delete id="deleteArticleCategoryByArticleIds">
+        DELETE FROM sys_article_category WHERE article_id IN
+        <foreach item="id" index="index" collection="list"
+                 open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getArticleCategories" resultMap="resultMap">
+        SELECT
+            c.id,
+            c.name,
+            a.id AS articleId,
+            a.title,
+            a.create_time
+        FROM
+            sys_category c
+                LEFT JOIN sys_article_category sac ON c.id = sac.category_id
+                LEFT JOIN sys_article a ON sac.article_id = a.id AND a.status = 1
+        WHERE
+            a.id IS NOT NULL
+        ORDER BY
+            a.is_stick DESC,
+            a.create_time DESC
+    </select>
+
+    <select id="getCategoryByArticleId" resultType="java.lang.String">
+        SELECT
+            c.name
+        FROM
+            sys_category c
+                LEFT JOIN sys_article_category sac ON c.id = sac.category_id
+        where sac.article_id = #{id}
+    </select>
+</mapper>
