@@ -1,17 +1,44 @@
-FROM openjdk:11-jre
+# 第一阶段：构建应用
+FROM maven:3.8-openjdk-8 AS builder
 
-ENTRYPOINT ["top", "-b"]
+# 设置工作目录
+WORKDIR /app
 
-# author
-MAINTAINER hxp
+# 复制 pom.xml 文件
+COPY pom.xml .
+COPY hxp-common/pom.xml hxp-common/
+COPY hxp-admin/pom.xml hxp-admin/
+COPY hxp-api/pom.xml hxp-api/
+COPY hxp-server/pom.xml hxp-server/
+COPY hxp-file/pom.xml hxp-file/
+COPY hxp-quartz/pom.xml hxp-quartz/
+COPY hxp-auth/pom.xml hxp-auth/
 
-# 挂载目录
-VOLUME /home/hxp
-# 创建目录
-RUN mkdir -p /home/hxp
-# 指定路径
-WORKDIR /home/hxp
-# 复制jar文件到路径
-COPY ./hxp-server/target/hxp-blog.jar /home/hxp/hxp-blog.jar
-# 启动认证服务
-ENTRYPOINT ["sh", "-c", "java -jar hxp-blog.jar"]
+# 下载依赖（利用Docker缓存层）
+RUN mvn dependency:go-offline
+
+# 复制源代码
+COPY . .
+
+# 构建应用
+RUN mvn clean package -DskipTests
+
+# 第二阶段：运行应用
+FROM openjdk:8-jre-slim
+
+WORKDIR /app
+
+# 复制构建好的jar包
+COPY --from=builder /app/hxp-server/target/hxp-blog.jar ./app.jar
+
+# 复制ip2region.xdb文件（如果需要）
+COPY ip2region.xdb ./
+
+# 设置时区
+ENV TZ=Asia/Shanghai
+
+# 暴露端口（根据实际应用端口修改）
+EXPOSE 8080
+
+# 设置启动命令
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
