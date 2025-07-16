@@ -37,10 +37,9 @@ COPY ip2region.xdb ./
 # 设置时区
 ENV TZ=Asia/Shanghai
 ENV JAVA_OPTS="-Xms256m -Xmx512m -Djava.security.egd=file:/dev/./urandom"
-ENV SPRING_OPTS="--spring.output.ansi.enabled=ALWAYS"
 
 # 暴露端口（根据实际应用端口修改）
 EXPOSE 8080
 
 # 设置启动命令
-ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} ${SPRING_OPTS} -jar /app/app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar --spring.output.ansi.enabled=ALWAYS"]
